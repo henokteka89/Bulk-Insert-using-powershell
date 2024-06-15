@@ -1,0 +1,39 @@
+--Bulk Insert Using Powershell
+---Change Source, servernme and databasename
+
+# Load Excel COM object
+$excel = New-Object -ComObject Excel.Application
+$excel.Visible = $false
+
+# Open Excel file
+$workbook = $excel.Workbooks.Open("C:\ABC\EmployeeRecords.xlsx")
+$sheet = $workbook.Sheets.Item(1)
+
+# Create SQL connection
+$connectionString = "Server=DESKTOP-ABCDL;Database=AWPract;Integrated Security=True;"
+$sqlConnection = New-Object System.Data.SqlClient.SqlConnection
+$sqlConnection.ConnectionString = $connectionString
+$sqlConnection.Open()
+
+# Read data from Excel and insert into SQL
+$rowIndex = 2
+while ($sheet.Cells.Item($rowIndex, 1).Value() -ne $null) {
+    $firstName = $sheet.Cells.Item($rowIndex, 1).Value()
+    $lastName = $sheet.Cells.Item($rowIndex, 2).Value()
+    $department = $sheet.Cells.Item($rowIndex, 3).Value()
+
+    $query = "INSERT INTO EmployeeRecords (FirstName, LastName, Department) VALUES ('$firstName', '$lastName', '$department')"
+    $command = $sqlConnection.CreateCommand()
+    $command.CommandText = $query
+    $command.ExecuteNonQuery()
+
+    $rowIndex++
+}
+
+# Close the Excel and SQL connection
+$workbook.Close($false)
+$excel.Quit()
+$sqlConnection.Close()
+[System.Runtime.Interopservices.Marshal]::ReleaseComObject($excel)
+
+Write-Output "Data imported successfully"
