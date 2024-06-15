@@ -1,5 +1,6 @@
 -- Sample Generate records for practice
--- Change the maximum value e.g. below is 5000 records
+-- Change the maximum value e.g. below is 5000 records. 
+---Change file destination "C:\abc\.."
 
 
 $Excel = New-Object -ComObject Excel.Application
